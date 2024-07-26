@@ -23,7 +23,7 @@ runDB appConfig query = do
 runDBMigration :: AppMonad ()
 runDBMigration = do 
   appConfig <- ask 
-  runDB appConfig (runMigration migrateAll)
+  runDB appConfig (runDBMigration migrateAll)
 
 
 
