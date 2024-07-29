@@ -33,15 +33,3 @@ getStudentByName name = do
   case maybeStudent of
     Just student -> return $ ApiStudent (studentId student) (studentName student) (studentAge student)
     Nothing -> throwError err404
-
-
-
--- iss handler ka type change krna he
--- AppMonad NoContent nahin Server API krna he
-
--- uske liye Server toh Servant ka he but API humara type he
--- API ka structure change krke return me kuchh dena hoga
-
-
-
-

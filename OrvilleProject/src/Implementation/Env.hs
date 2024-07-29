@@ -11,6 +11,13 @@ import qualified Orville.PostgreSQL as O
 import qualified Orville.PostgreSQL.Raw.Connection as RC
 import Orville.PostgreSQL (ConnectionOptions(connectionString))
 
+
+
+
+
+
+
+
 data PostgreSQLConfig = PostgreSQLConfig
   { pg_host :: String
   , pg_port :: String
@@ -19,6 +26,12 @@ data PostgreSQLConfig = PostgreSQLConfig
   , pg_dbname :: String
   } deriving (Show, Eq)
 
+
+
+
+
+
+
 pgConfigToString :: PostgreSQLConfig -> String
 pgConfigToString c = 
   "host=" <> pg_host c <> 
@@ -26,6 +39,12 @@ pgConfigToString c =
   " user=" <> pg_user c <> 
   " password=" <> pg_password c <> 
   " dbname=" <> pg_dbname c
+
+
+
+
+
+
 
 getPostgresConfig :: IO (Maybe PostgreSQLConfig)
 getPostgresConfig = do
