@@ -1,7 +1,7 @@
 
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE OverloadedStrings #-}
+
+
 
 module Main where
 
