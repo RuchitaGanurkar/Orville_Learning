@@ -1,10 +1,8 @@
 
-{-# LANGUAGE DataKinds #-}
+module main where
 
 
-
-module Main where
-
+  
 import Network.Wai.Handler.Warp (run)
 import Servant
 import Implementation.Config (AppConfig(..), initialConfig)

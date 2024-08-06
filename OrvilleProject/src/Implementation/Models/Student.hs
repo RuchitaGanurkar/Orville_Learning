@@ -1,8 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 
-
 module Implementation.Models.Student where
+
+
 
 import qualified Data.Text as T
 import qualified Orville.PostgreSQL as O

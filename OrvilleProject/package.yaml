@@ -31,6 +31,7 @@ dependencies:
 - warp
 - mtl
 - orville-postgresql
+- resource-pool
 
 
 ghc-options:

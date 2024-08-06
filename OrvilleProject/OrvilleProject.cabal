@@ -46,6 +46,7 @@ library
     , mtl
     , orville-postgresql
     , postgresql-libpq
+    , resource-pool
     , servant
     , servant-server
     , text
@@ -70,6 +71,7 @@ executable OrvilleProject-exe
     , mtl
     , orville-postgresql
     , postgresql-libpq
+    , resource-pool
     , servant
     , servant-server
     , text
@@ -95,6 +97,7 @@ test-suite OrvilleProject-test
     , mtl
     , orville-postgresql
     , postgresql-libpq
+    , resource-pool
     , servant
     , servant-server
     , text

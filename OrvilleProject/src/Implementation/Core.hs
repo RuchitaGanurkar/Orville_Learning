@@ -1,3 +1,7 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
+
+
 module Implementation.Core where
 
 import Control.Monad.Reader
@@ -9,3 +13,6 @@ type AppMonad = ReaderT AppConfig (ExceptT ServerError IO)
 
 runApp :: AppConfig -> AppMonad a -> Handler a
 runApp cfg appMonad = Handler $ runReaderT appMonad cfg
+
+
+-- correct

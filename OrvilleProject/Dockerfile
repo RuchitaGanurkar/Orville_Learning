@@ -1,22 +1,28 @@
-FROM ubuntu:22.04
+
+FROM haskell
 
 
-COPY ./ .
+WORKDIR /app
 
-RUN sudo apt-get update \
-    sudo apt-get upgrade \
-    stack setup \
-    stack build \
-    sudo apt curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh     
-    
+COPY stack.yaml stack.yaml
+COPY stack.yaml.lock stack.yaml.lock
 
-EXPOSE 3000 
+COPY . .
 
 
-COPY .stack-work/install/x86_64-linux/9426f635756deea4d1c1a15610c4d68acba70ff55dc117e9cf2bba60ad1d0bee/9.6.6/bin/   .
+RUN apt-get update && apt-get install -y \
+  libpq-dev  # PostgreSQL client library
 
 
-CMD ["stack build", "stack run"]
+RUN stack setup
+RUN stack build --install-ghc
+
+# stack build --system-ghc
 
 
 
+# Expose the port that your application listens on (adjust if necessary)
+EXPOSE 3000
+
+
+CMD ["stack", "exec", "OrvilleProject-exe"]

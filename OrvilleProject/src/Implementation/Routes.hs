@@ -19,3 +19,4 @@ api = Proxy
 
 appServer :: ServerT API AppMonad
 appServer = postStudent :<|> getStudentById :<|> getStudentByName
+
