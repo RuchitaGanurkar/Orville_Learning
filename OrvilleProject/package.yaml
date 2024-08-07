@@ -30,6 +30,7 @@ dependencies:
 - wai
 - warp
 - mtl
+- wai-extra
 - orville-postgresql
 - resource-pool
 

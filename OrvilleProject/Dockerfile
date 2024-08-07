@@ -24,5 +24,11 @@ RUN stack build --install-ghc
 # Expose the port that your application listens on (adjust if necessary)
 EXPOSE 3000
 
+# Set environment variables for database configuration
+ENV export POSTGRES_HOST=localhost
+ENV export POSTGRES_PORT=5432
+ENV export POSTGRES_USER=ruchita
+ENV export POSTGRES_PASS=qwerty
+ENV export POSTGRES_DB=orville_project
 
-CMD ["stack", "exec", "OrvilleProject-exe"]
+CMD ["stack", "exec", "ProjectFirst-exe"]
