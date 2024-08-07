@@ -31,4 +31,4 @@ ENV export POSTGRES_USER=ruchita
 ENV export POSTGRES_PASS=qwerty
 ENV export POSTGRES_DB=orville_project
 
-CMD ["stack", "exec", "ProjectFirst-exe"]
+CMD ["stack", "exec", "OrvilleProject-exe"]
