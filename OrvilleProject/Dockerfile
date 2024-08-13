@@ -1,25 +1,29 @@
 
 FROM haskell
 
-
-WORKDIR /app
-
-COPY stack.yaml stack.yaml
-COPY stack.yaml.lock stack.yaml.lock
-
-COPY . .
-
-
 RUN apt-get update && apt-get install -y \
   libpq-dev  # PostgreSQL client library
 
+WORKDIR /app
+
+# COPY stack.yaml stack.yaml
+# COPY stack.yaml.lock stack.yaml.lock
+
+# COPY package.yaml package.yaml
+
+# COPY src/ src/
+# COPY app/ app/
+
+COPY . .
 
 RUN stack setup
-RUN stack build --install-ghc
+RUN stack build
 
 # stack build --system-ghc
 
+COPY . .
 
+RUN stack build
 
 # Expose the port that your application listens on (adjust if necessary)
 EXPOSE 3000

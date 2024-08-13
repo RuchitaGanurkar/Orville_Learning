@@ -3,13 +3,12 @@ version: '3.3'
 services:
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     depends_on:
-      - db
+      db:
+        condition: service_started
     environment:
-      POSTGRES_HOST: localhost
+      POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_USER: ruchita
       POSTGRES_PASS: qwerty
@@ -18,7 +17,7 @@ services:
       - "3000:3000"
     volumes:
       - .:/app
-    command: ["stack", "exec", "OrvilleProject-exe"]
+    # command: ["stack", "exec", "OrvilleProject-exe"]
 
 
 
@@ -28,7 +27,7 @@ services:
       POSTGRES_USER: ruchita
       POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: orville_project
-      PATH: "/app/.stack-work/install/x86_64-linux/9426f635756deea4d1c1a15610c4d68acba70ff55dc117e9cf2bba60ad1d0bee/9.6.6/bin"
+      # PATH: "/app/.stack-work/install/x86_64-linux/9426f635756deea4d1c1a15610c4d68acba70ff55dc117e9cf2bba60ad1d0bee/9.6.6/bin"
 
     volumes:
       - db-data:/var/lib/postgresql/data
