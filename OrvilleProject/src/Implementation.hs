@@ -93,7 +93,7 @@ studentMarshaller =
 studentTable :: O.TableDefinition (O.HasKey StudentId) Student Student
 studentTable =
   O.mkTableDefinition
-    "students"
+    "orville_student_demo"
     (O.primaryKey studentIdField)
     studentMarshaller
 

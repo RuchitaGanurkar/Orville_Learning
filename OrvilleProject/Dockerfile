@@ -2,24 +2,23 @@
 FROM haskell
 
 
+RUN apt-get update && apt-get install -y \
+    libpq-dev  
+
 WORKDIR /app
 
-COPY stack.yaml stack.yaml
-COPY stack.yaml.lock stack.yaml.lock
 
 COPY . .
 
 
-RUN apt-get update && apt-get install -y \
-  libpq-dev  # PostgreSQL client library
-
-
 RUN stack setup
+
 RUN stack build --install-ghc
 
-# stack build --system-ghc
 
+COPY . .
 
+RUN stack build
 
 # Expose the port that your application listens on (adjust if necessary)
 EXPOSE 3000
@@ -31,4 +30,4 @@ ENV POSTGRES_USER=ruchita
 ENV POSTGRES_PASS=qwerty
 ENV POSTGRES_DB=orville_project
 
-CMD ["stack", "exec", "OrvilleProject-exe"]
+CMD ["stack", "run"]

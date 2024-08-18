@@ -24,7 +24,6 @@ dependencies:
 - aeson
 - postgresql-libpq
 - text
-- vector
 - servant-server
 - servant
 - wai

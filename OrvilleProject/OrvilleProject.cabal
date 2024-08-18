@@ -43,7 +43,6 @@ library
     , servant
     , servant-server
     , text
-    , vector
     , wai
     , wai-extra
     , warp
@@ -69,7 +68,6 @@ executable OrvilleProject-exe
     , servant
     , servant-server
     , text
-    , vector
     , wai
     , wai-extra
     , warp
@@ -96,7 +94,6 @@ test-suite OrvilleProject-test
     , servant
     , servant-server
     , text
-    , vector
     , wai
     , wai-extra
     , warp
