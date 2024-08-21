@@ -25,7 +25,9 @@ source-repository head
 
 library
   exposed-modules:
-      Implementation
+      Configuration
+      Handler
+      Marshaller
   other-modules:
       Paths_OrvilleProject
   autogen-modules:
