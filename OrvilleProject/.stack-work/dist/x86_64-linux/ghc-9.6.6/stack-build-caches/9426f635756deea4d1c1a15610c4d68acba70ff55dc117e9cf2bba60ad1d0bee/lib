@@ -1,0 +1,22 @@
+/home/adming10x/.ghcup/ghc/9.6.6/lib/ghc-9.6.6/lib/x86_64-linux-ghc-9.6.6/rts-1.0.2/include/ghcversion.h:
+  hash: 9032f6afc97dcddfe8c8b306639eb6f456e3f6667f3dd8268681f51bb77c8634
+? /home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/dist/x86_64-linux/ghc-9.6.6/build/autogen/Paths_OrvilleProject.hs
+: hash: 99342240b09e34293441952ad9e4300b6b672f7e9f5ce1c8bb7a153de341ddf6
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/dist/x86_64-linux/ghc-9.6.6/build/autogen/cabal_macros.h:
+  hash: 825c7b489ded57a967abbabc5f55ed97817d6cd977e13b3e36d37aea9489a156
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/CHANGELOG.md:
+  hash: 8a90e82adad82a74c120eff169223cfc5e8e680dd67596e8158712a44de1decd
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/OrvilleProject.cabal:
+  hash: cf4a13cd13c63be7604a751e38b8f971e356116be1ab3eedb3ff65c53124b713
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/README.md:
+  hash: fcabc260db7f26e8d56987bfb073a9113089c32e94752012302d239cc2c0da11
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/package.yaml:
+  hash: f63f5fc94f54c68f8a89c6e1b1f6f30c5fb8930b8664c27a533f040e1a167d3e
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/src/Configuration.hs:
+  hash: c5cc47f5027e8df31ad6a3001faa7ce4e09337b5df9dfb01e86d48690d91fb73
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/src/Handler.hs:
+  hash: c068db933690628c6874601b93abef4ddd012c01194a32a43a9059d37a404770
+/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/src/Marshaller.hs:
+  hash: 2822c4a04a5f7fbae76b330261533cc24d32514ce734b24cdba7307d3d980e25
+/usr/include/stdc-predef.h:
+  hash: cb08cd5d4cc059a90833ac48a284d25016e8d56ded8ad4cd98d8ac59cc5053f3

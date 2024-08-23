@@ -9,8 +9,8 @@ services:
       database:
        condition: service_started
     
-    environment:
-     - DB_CONN_STRING=${DB_CONN_STRING}
+    env_file:
+      - ./configuration.env
 
 
     ports:
@@ -23,11 +23,8 @@ services:
   database:
     image: postgres:16.3
 
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
+    env_file:
+      - ./configuration.env
       
         
     volumes:
