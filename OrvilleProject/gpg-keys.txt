@@ -1,0 +1,8 @@
+USER-ID:
+    "Ruchita <rmganurkar1323@gmail.com>"
+
+
+
+pub   rsa3072 2024-08-23 [SC] [expires: 2026-08-23] 00B88B159F88C52140DD37A20EF39C6BBDAA8EF7
+uid   [ultimate] Ruchita <rmganurkar1323@gmail.com>
+sub   rsa3072 2024-08-23 [E] [expires: 2026-08-23]
