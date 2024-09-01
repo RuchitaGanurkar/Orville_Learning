@@ -21,3 +21,5 @@ main = do
       let appConfig = AppConfig { appDbPool = pool }
       run 3000 (app appConfig)
     Nothing -> error "Database Configuration Not Found"
+
+

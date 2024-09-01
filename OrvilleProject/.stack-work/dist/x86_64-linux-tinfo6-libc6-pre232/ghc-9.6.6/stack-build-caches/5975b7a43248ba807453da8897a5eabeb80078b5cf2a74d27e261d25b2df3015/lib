@@ -7,15 +7,15 @@
 /app/OrvilleProject.cabal:
   hash: cf4a13cd13c63be7604a751e38b8f971e356116be1ab3eedb3ff65c53124b713
 /app/README.md:
-  hash: 1f8ce38559c110c13cea6948ad44cd724d8e551242efd662e471fff1c6d2050d
+  hash: b035bead5e3a43ab53684554a3eb686d52324b976948d33e871ef9271cac2458
 /app/package.yaml:
   hash: f63f5fc94f54c68f8a89c6e1b1f6f30c5fb8930b8664c27a533f040e1a167d3e
 /app/src/Configuration.hs:
   hash: c5cc47f5027e8df31ad6a3001faa7ce4e09337b5df9dfb01e86d48690d91fb73
 /app/src/Handler.hs:
-  hash: c068db933690628c6874601b93abef4ddd012c01194a32a43a9059d37a404770
+  hash: 40695f18dff3032c601855bc663284b9fbc242b5f5169c186d5b95af69d6c13f
 /app/src/Marshaller.hs:
-  hash: 2822c4a04a5f7fbae76b330261533cc24d32514ce734b24cdba7307d3d980e25
+  hash: 4998da32aa3c5952a7f5c4f5e4ff1486e539de59da22f54f19bd88bdf639fcad
 ? /root/.stack/programs/x86_64-linux/ghc-tinfo6-libc6-pre232-9.6.6/lib/ghc-9.6.6/lib/x86_64-linux-ghc-9.6.6/rts-1.0.2/include/ghcversion.h
 : hash: 9032f6afc97dcddfe8c8b306639eb6f456e3f6667f3dd8268681f51bb77c8634
 /usr/include/stdc-predef.h:

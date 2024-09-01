@@ -7,9 +7,9 @@
 /app/OrvilleProject.cabal:
   hash: cf4a13cd13c63be7604a751e38b8f971e356116be1ab3eedb3ff65c53124b713
 /app/README.md:
-  hash: 1f8ce38559c110c13cea6948ad44cd724d8e551242efd662e471fff1c6d2050d
+  hash: b035bead5e3a43ab53684554a3eb686d52324b976948d33e871ef9271cac2458
 /app/app/Main.hs:
-  hash: 20314f2f6c4f6e4986cf4b3c304f5073b5c587c99ba610b4d7cf2c67aa8d2f9d
+  hash: 54b94d08e4c510adab3af298302fa6ca21522ae13f652ef5efc9ba7e9ea53739
 /app/package.yaml:
   hash: f63f5fc94f54c68f8a89c6e1b1f6f30c5fb8930b8664c27a533f040e1a167d3e
 ? /root/.stack/programs/x86_64-linux/ghc-tinfo6-libc6-pre232-9.6.6/lib/ghc-9.6.6/lib/x86_64-linux-ghc-9.6.6/rts-1.0.2/include/ghcversion.h

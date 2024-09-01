@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 
 
 module Handler where
@@ -27,7 +28,6 @@ data ApiStudent = ApiStudent
   , student_name :: StudentName
   , student_age :: StudentAge
   } deriving (Generic, Show)
-
 instance FromJSON ApiStudent where
     parseJSON = withObject "ApiStudent" $ \s -> ApiStudent <$> s .: "student_id" <*> s .: "student_name" <*> s .: "student_age"
     
@@ -40,6 +40,11 @@ type API =
        "student" :> ReqBody '[JSON] ApiStudent :> Post '[JSON] NoContent
   :<|> "student" :> Capture "id" Int32 :> Get '[JSON] ApiStudent
   :<|> "student" :> Capture "name" T.Text :> Get '[JSON] ApiStudent
+
+
+
+
+
 
 
 

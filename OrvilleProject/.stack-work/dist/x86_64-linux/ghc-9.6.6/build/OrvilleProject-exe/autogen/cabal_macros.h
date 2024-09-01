@@ -40,6 +40,16 @@
   (major1) == 4 && (major2) <  18 || \
   (major1) == 4 && (major2) == 18 && (minor) <= 2)
 #endif /* MIN_VERSION_base */
+/* package extra-1.7.16 */
+#ifndef VERSION_extra
+#define VERSION_extra "1.7.16"
+#endif /* VERSION_extra */
+#ifndef MIN_VERSION_extra
+#define MIN_VERSION_extra(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  7 || \
+  (major1) == 1 && (major2) == 7 && (minor) <= 16)
+#endif /* MIN_VERSION_extra */
 /* package mtl-2.3.1 */
 #ifndef VERSION_mtl
 #define VERSION_mtl "2.3.1"
@@ -231,6 +241,16 @@
   (major1) == 1 && (major2) <  24 || \
   (major1) == 1 && (major2) == 24 && (minor) <= 0)
 #endif /* MIN_TOOL_VERSION_hscolour */
+/* tool pkg-config-0.29.2 */
+#ifndef TOOL_VERSION_pkg_config
+#define TOOL_VERSION_pkg_config "0.29.2"
+#endif /* TOOL_VERSION_pkg_config */
+#ifndef MIN_TOOL_VERSION_pkg_config
+#define MIN_TOOL_VERSION_pkg_config(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  29 || \
+  (major1) == 0 && (major2) == 29 && (minor) <= 2)
+#endif /* MIN_TOOL_VERSION_pkg_config */
 /* tool runghc-9.6.6 */
 #ifndef TOOL_VERSION_runghc
 #define TOOL_VERSION_runghc "9.6.6"
@@ -253,7 +273,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "OrvilleProject-0.1.0.0-FhBTm0ejeaTI9qMAAN0TNr-OrvilleProject-exe"
+#define CURRENT_COMPONENT_ID "OrvilleProject-0.1.0.0-ID1zjrs9prYLS2u5BpiKHj-OrvilleProject-exe"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
