@@ -1,6 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE DeriveAnyClass #-}
 
 
@@ -159,7 +158,7 @@ cronTable =
 
 data Graph = Graph
   { graphId        :: Int32
-  , graphData      :: T.Text -- JSON data
+  , graphData      :: T.Text 
   , graphIdentifier :: Identifier
   } deriving (Show, Generic, FromJSON, ToJSON)
 

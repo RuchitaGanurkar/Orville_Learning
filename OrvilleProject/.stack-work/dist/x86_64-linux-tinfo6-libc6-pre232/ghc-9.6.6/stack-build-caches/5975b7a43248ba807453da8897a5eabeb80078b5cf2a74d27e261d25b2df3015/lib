@@ -1,21 +1,19 @@
 /app/.stack-work/dist/x86_64-linux-tinfo6-libc6-pre232/ghc-9.6.6/build/autogen/Paths_OrvilleProject.hs:
-  hash: 3051f259945ffd394a3508b545e33e9561909531053f9b4340fed29e99fa1a17
-/app/.stack-work/dist/x86_64-linux-tinfo6-libc6-pre232/ghc-9.6.6/build/autogen/cabal_macros.h:
-  hash: d54d6c1d9c879a5fde667d3f29e496c1849c1245bf1bac423b75b64673f2806b
+  hash: bb8837783468493a0eea7d5e523c7bbc7295e660b1b2c8ede54a8d4b4e4b7afa
 /app/CHANGELOG.md:
   hash: 8a90e82adad82a74c120eff169223cfc5e8e680dd67596e8158712a44de1decd
 /app/OrvilleProject.cabal:
-  hash: cf4a13cd13c63be7604a751e38b8f971e356116be1ab3eedb3ff65c53124b713
+  hash: 1ed706e03192245e5ea38450ea23ff04f6563d634ba19371b63967b3f1e18440
 /app/README.md:
   hash: b035bead5e3a43ab53684554a3eb686d52324b976948d33e871ef9271cac2458
 /app/package.yaml:
-  hash: f63f5fc94f54c68f8a89c6e1b1f6f30c5fb8930b8664c27a533f040e1a167d3e
+  hash: 7ea9a6b3a0788b2c7b51f27b7a33e044e38fc32959acce0ea921573fde3b6245
 /app/src/Configuration.hs:
   hash: c5cc47f5027e8df31ad6a3001faa7ce4e09337b5df9dfb01e86d48690d91fb73
 /app/src/Handler.hs:
-  hash: 40695f18dff3032c601855bc663284b9fbc242b5f5169c186d5b95af69d6c13f
+  hash: ab559ae6d3fcaf324bf225f9d4be74849f3695b6ec9289f5b46a8dd35c34ebdf
 /app/src/Marshaller.hs:
-  hash: 4998da32aa3c5952a7f5c4f5e4ff1486e539de59da22f54f19bd88bdf639fcad
+  hash: 7f8df02d265f9bd96573b17166b4c1a3bff84043c54d6b90e867e25354b39835
 ? /root/.stack/programs/x86_64-linux/ghc-tinfo6-libc6-pre232-9.6.6/lib/ghc-9.6.6/lib/x86_64-linux-ghc-9.6.6/rts-1.0.2/include/ghcversion.h
 : hash: 9032f6afc97dcddfe8c8b306639eb6f456e3f6667f3dd8268681f51bb77c8634
 /usr/include/stdc-predef.h:

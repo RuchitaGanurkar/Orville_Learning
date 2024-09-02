@@ -17,7 +17,7 @@ main = do
   case mConnOpts of
     Just connString-> do
       pool <- O.createConnectionPool (C.connectionOptions connString)
-      O.runOrville pool $ A.autoMigrateSchema A.defaultOptions [A.SchemaTable studentTable]
+      O.runOrville pool $ A.autoMigrateSchema A.defaultOptions [A.SchemaTable cronTable]
       let appConfig = AppConfig { appDbPool = pool }
       run 3000 (app appConfig)
     Nothing -> error "Database Configuration Not Found"
