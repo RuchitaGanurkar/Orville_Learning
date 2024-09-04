@@ -26,6 +26,8 @@ source-repository head
 library
   exposed-modules:
       Configuration
+      CronHandlers
+      CronMarshaller
       Handler
       Marshaller
   other-modules:

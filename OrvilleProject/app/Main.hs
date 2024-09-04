@@ -4,10 +4,14 @@ module Main where
 import qualified Orville.PostgreSQL.AutoMigration as A
 import qualified Orville.PostgreSQL as O
 import Network.Wai.Handler.Warp (run)
-import Handler
+import CronHandlers
+import CronMarshaller
 import Marshaller
+import Handler
 import qualified Configuration as C
 import System.Environment
+
+
 
 
 main :: IO ()
@@ -19,7 +23,7 @@ main = do
       pool <- O.createConnectionPool (C.connectionOptions connString)
       O.runOrville pool $ A.autoMigrateSchema A.defaultOptions [A.SchemaTable cronTable]
       let appConfig = AppConfig { appDbPool = pool }
-      run 3000 (app appConfig)
+      run 3000 (cronApp appConfig)
     Nothing -> error "Database Configuration Not Found"
 
 
