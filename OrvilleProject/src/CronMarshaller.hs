@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE RecordWildCards #-}
 
 
 module CronMarshaller where
@@ -44,13 +45,15 @@ For 2.
 
 newtype PersonName = PersonName T.Text deriving (Show, Eq, Generic , FromJSON , ToJSON)
 newtype PersonAge = PersonAge Int32 deriving (Show, Eq, Generic , FromJSON , ToJSON)
+newtype PersonMobile = PersonMobile Int32 deriving (Show, Eq, Generic , FromJSON , ToJSON)
 
 
 
 
 data Person = Person {
   name :: PersonName ,
-  age :: PersonAge 
+  age :: PersonAge ,
+  mobile :: PersonMobile
 } deriving (Show, Eq, Generic , FromJSON , ToJSON)
 
 
@@ -80,7 +83,7 @@ data Cron = Cron
   , format     :: Formats
   , status     :: Status
   , identifier :: Identifier
-  , dataField  :: T.Text 
+  , dataField  :: Person
   } deriving (Show, Generic, FromJSON, ToJSON)
 
 
@@ -100,7 +103,7 @@ statusField = O.convertField jsonByteStringConversion ( O.coerceField (O.unbound
 identifierField :: O.FieldDefinition O.NotNull Identifier
 identifierField = O.convertField  jsonByteStringConversion(O.coerceField (O.unboundedTextField "identifier"))
 
-checkDataField :: O.FieldDefinition O.NotNull T.Text
+checkDataField :: O.FieldDefinition O.NotNull Person
 checkDataField = O.convertField jsonByteStringConversion (O.jsonbField "data")
 
 
@@ -129,39 +132,23 @@ cronTable =
     cronMarshaller
 
 
+
 data Graph = Graph
   { 
-
-    g_name :: PersonName ,
-    g_age :: PersonAge,
-    g_mobile :: Int32 
-    -- Address baki he
+    g_details :: Person 
   } deriving (Show, Generic, FromJSON, ToJSON)
 
 
-
-graphNameField :: O.FieldDefinition O.NotNull PersonName 
-graphNameField = O.convertField  jsonByteStringConversion(O.coerceField  $ O.unboundedTextField "g_name") 
-
-graphMobileField ::  O.FieldDefinition O.NotNull Int32 
-graphMobileField = O.integerField "g_mobile"
+graphDetailsField :: O.FieldDefinition O.NotNull Person 
+graphDetailsField = O.convertField jsonByteStringConversion(O.coerceField  $ O.unboundedTextField "g_details") 
 
 
-graphAgeField :: O.FieldDefinition O.NotNull PersonAge 
-graphAgeField = O.coerceField $ O.integerField "g_age" 
-
-
-
-
---Graph Marshaller
+--Graph Marshaller || Use marshallReadOnly
 graphMarshaller :: O.SqlMarshaller Graph Graph
 graphMarshaller =
   Graph
-    <$> O.marshallField g_name graphNameField
-    <*> O.marshallField g_age graphAgeField
-    <*> O.marshallField g_mobile graphMobileField
-
-
+    <$> O.marshallField g_details graphDetailsField
+  
 
 
 graphTable :: O.TableDefinition O.NoKey Graph Graph
