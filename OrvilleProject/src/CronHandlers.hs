@@ -218,6 +218,13 @@ getCronByIdentifier ident = do
     Just cron -> return cron
 
 
+parseFormat :: T.Text -> Formats
+parseFormat "Create" = Create (T.pack $ "Create")
+parseFormat "Update" = Update (T.pack $ "Update")
+parseFormat "Delete" = Delete (T.pack $ "Delete")
+parseFormat _        = error "Invalid Format"
+
+
 handleCronFormat :: T.Text -> T.Text -> Cron -> AppMonad NoContent
 handleCronFormat ident format cron = do
   let newCron = cron { identifier = Identifier ident, format = parseFormat format }
@@ -240,16 +247,6 @@ handleDelete ident cron = do
 
 handleGetCronByIdentifier :: T.Text -> AppMonad Cron
 handleGetCronByIdentifier = getCronByIdentifier
-
-
-
-parseFormat :: T.Text -> Formats
-parseFormat "Create" = Create (T.pack $ "Create")
-parseFormat "Update" = Update (T.pack $ "Update")
-parseFormat "Delete" = Delete (T.pack $ "Delete")
-parseFormat _        = error "Invalid Format"
-
-
 
 
 
