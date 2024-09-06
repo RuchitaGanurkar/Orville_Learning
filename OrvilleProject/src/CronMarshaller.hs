@@ -18,7 +18,7 @@ import Data.Aeson (FromJSON, ToJSON, decode, encode, toJSON)
 
 ---------------------------------------------------------------------------------------------------
 
---CRON TASK : DATE (4th September 2024)
+--CRON TASK : DATE (6th September 2024)
 
 {-
 
@@ -41,25 +41,6 @@ For 2.
 -}
 
 
-
-
-newtype PersonName = PersonName T.Text deriving (Show, Eq, Generic , FromJSON , ToJSON)
-newtype PersonAge = PersonAge Int32 deriving (Show, Eq, Generic , FromJSON , ToJSON)
-newtype PersonMobile = PersonMobile Int32 deriving (Show, Eq, Generic , FromJSON , ToJSON)
-
-
-
-
-data Person = Person {
-  name :: PersonName ,
-  age :: PersonAge ,
-  mobile :: PersonMobile
-} deriving (Show, Eq, Generic , FromJSON , ToJSON)
-
-
-
-
-
 newtype Identifier = Identifier T.Text deriving (Show, Eq, Generic, FromJSON, ToJSON)
 newtype CronId = CronId Int32 deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
@@ -69,13 +50,22 @@ data Status
     | Error T.Text
     deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
-
 data Formats
     = Create T.Text
     | Update T.Text
     | Delete T.Text
     deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
+
+newtype PersonName = PersonName T.Text deriving (Show, Eq, Generic , FromJSON , ToJSON)
+newtype PersonAge = PersonAge Int32 deriving (Show, Eq, Generic , FromJSON , ToJSON)
+newtype PersonMobile = PersonMobile Int32 deriving (Show, Eq, Generic , FromJSON , ToJSON)
+
+data Person = Person {
+  name :: PersonName ,
+  age :: PersonAge ,
+  mobile :: PersonMobile
+} deriving (Show, Eq, Generic , FromJSON , ToJSON)
 
 
 data Cron = Cron
@@ -106,6 +96,8 @@ identifierField = O.convertField  jsonByteStringConversion(O.coerceField (O.unbo
 checkDataField :: O.FieldDefinition O.NotNull Person
 checkDataField = O.convertField jsonByteStringConversion (O.jsonbField "data")
 
+-- since we are using data type to be stored in Cron in JSON format
+-- to match with DB table type we are converting things into SqlType
 
 jsonByteStringConversion :: (FromJSON a, ToJSON a) => O.SqlType T.Text -> O.SqlType a
 jsonByteStringConversion =
@@ -132,7 +124,7 @@ cronTable =
     cronMarshaller
 
 
-
+--------------------------------------------------------------------------------------------------
 data Graph = Graph
   { 
     g_details :: Person 

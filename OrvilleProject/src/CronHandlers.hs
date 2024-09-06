@@ -3,6 +3,9 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE BlockArguments #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant return" #-}
 
 
 
@@ -21,10 +24,12 @@ import qualified Orville.PostgreSQL as O
 
 import Handler
 import CronMarshaller
+import Data.Maybe
+import qualified Orville.PostgreSQL.Execution as E
 
 ---------------------------------------------------------------------------------------------------
 
---CRON TASK : DATE (4th September 2024)
+--CRON TASK : DATE (6th September 2024)
 
 {-
 
@@ -66,61 +71,30 @@ you can not do create for any identifier more than 1 (maybe primary or unique co
 -}
 
 
-
--- type PostCronFormat = 
---   "cron" :> Capture "identifier" T.Text 
---          :> Capture "format" T.Text 
---          :> ReqBody '[JSON] Cron 
---          :> Post '[JSON] NoContent
--- -- Done
-
--- type GetCronByCreate = 
---   "create" :> Capture "identifier" T.Text 
---          :> Get '[JSON] Cron
-
-
--- type CronByCreate =
---   "create" :> Capture "identifier" T.Text
---            :> ReqBody '[JSON] Cron 
---            :> Post '[JSON] NoContent
-
-
--- type CronByUpdate =
---   "update" :> Capture "identifier" T.Text
---            :> ReqBody '[JSON] Cron 
---            :> Post '[JSON] NoContent
-
-
--- type CronByDelete =
---   "delete" :> Capture "identifier" T.Text
---            :> ReqBody '[JSON] Cron 
---            :> Delete '[JSON] NoContent   
-
-
--- type GetCronByUpdate = 
---   "update" :> Capture "identifier" T.Text 
---          :> Get '[JSON] Cron
-
-
--- type GetCronByDelete = 
---   "delete" :> Capture "identifier" T.Text 
---          :> Get '[JSON] Cron
-
 type CronFormat = "cron" :> Capture "identifier" T.Text :> Capture "format" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent
-type CronCreate = "create" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent
-type CronUpdate = "update" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent
-type CronDelete = "delete" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Delete '[JSON] NoContent
+
+-----------------------------------------------------------------------------------------------------------
+
+type CronCreate = "create" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent -- this should work with Graph when given any identifier which is present in Cron table when status is Pending in Cron table
+type CronUpdate = "update" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent -- this should work with Graph when given any identifier which is present in Cron table when status is Pending in Cron table
+type CronDelete = "delete" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent -- this should work with Graph when given any identifier which is present in Cron table when status is Pending in Cron table
+-- for above 3 need to modify handleCreate/handleUpdate/handleDelete functions
+
+-----------------------------------------------------------------------------------------------------------
+
 type CronByFormat = "cron" :> "identifier" :> Capture "identifier" T.Text :> Get '[JSON] Cron
+type CronByIdentifier = "cron" :> Capture "identifier" T.Text :> Get '[JSON] Cron
 type PostGraphData = "cron" :> ReqBody '[JSON] Graph :> Post '[JSON] NoContent
 
 
 
 type CAPI = 
         CronFormat
-   :<|> CronCreate 
-   :<|> CronUpdate 
-   :<|> CronDelete
+   :<|> CronCreate -- handleCreate
+   :<|> CronUpdate -- handleUpdate
+   :<|> CronDelete -- handleDelete
    :<|> CronByFormat
+   :<|> CronByIdentifier
    :<|> PostGraphData 
 
 
@@ -129,26 +103,45 @@ type CAppServer = ServerT CAPI AppMonad
 capi :: Proxy CAPI 
 capi = Proxy 
 
+-----------------------------------------------------------------------------------------------------------
+
+
 {-
+http://localhost:3000/cron/123/Create-Update-Delete
 {
-  "cronId": 1,
-  "format": {
-    "tag": "Create", 
-    "contents": "Create" 
-  },
-  "status": {
-    "tag": "Pending", 
-    "contents": "Pending" 
-  },
-	"identifier" : "567" ,
+  "cronId": 3,
+  "format": { "tag" : "Create" , "contents" : "It's Create Request" },
+  "status": { "tag" : "Pending" , "contents" : "It's Pending Status For Create Request" },
+	"identifier" : "123" ,
   "dataField": {
-		"name" : "ABC" , 
-		"age" : 27 ,
-		"mobile" : 543218
+		"name" : "PQR" , 
+		"age" : 34,
+		"mobile" : 9876
 	
 	}
 }
+
+----------------------------------------------------------------
+http://localhost:3000/cron/123/Delete-Create-Update [404]
+http://localhost:3000/cron/123/AnyFormat ["Expected Shows"]
+
+
+{
+  "cronId": 10,
+  "format": { "tag" : "AnyFormat" , "contents" : "It's Create Request" },
+  "status": { "tag" : "Pending" , "contents" : "It's Pending Status For Create Request" },
+	"identifier" : "123" ,
+  "dataField": {
+		"name" : "PQR" , 
+		"age" : 34,
+		"mobile" : 9876
+	
+	}
+}
+
 -}
+
+-----------------------------------------------------------------------------------------------------------
 
 postCron :: Cron -> AppMonad NoContent
 postCron cron = do
@@ -167,19 +160,44 @@ postCron cron = do
     return NoContent
 
 
+-- Checking format from parseFormat function
+handleCronFormat :: T.Text -> T.Text -> Cron -> AppMonad NoContent
+handleCronFormat ident format cron = do
+  let newCron = cron { identifier = Identifier ident, format = parseFormat format }
+  postCron newCron
 
--- Function to extract PersonName from Cron
-extractNameFromCron :: Cron -> PersonName
-extractNameFromCron cron = name (dataField cron)
+parseFormat :: T.Text -> Formats
+parseFormat "Create" = Create (T.pack $ "Create")
+parseFormat "Update" = Update (T.pack $ "Update")
+parseFormat "Delete" = Delete (T.pack $ "Delete")
+parseFormat _        = error "Invalid Format"
 
--- Function to extract PersonAge from Cron
-extractAgeFromCron :: Cron -> PersonAge
-extractAgeFromCron cron = age (dataField cron)
-
-extractMobileFromCron :: Cron -> PersonMobile
-extractMobileFromCron cron = mobile (dataField cron)
+-----------------------------------------------------------------------------------------------------------
 
 
+getCronByFormat :: T.Text -> AppMonad Cron
+getCronByFormat formatText = do
+  let format = parseFormat formatText
+  pool <- asks appDbPool
+  maybeCron <- liftIO $ O.runOrville pool $
+    O.findFirstEntityBy cronTable (O.where_ (O.fieldEquals formatField format))
+  case maybeCron of
+    Nothing -> throwError err404
+    Just cron -> return cron
+
+
+
+getCronByIdentifier :: T.Text -> AppMonad Cron
+getCronByIdentifier ident = do
+  pool <- asks appDbPool
+  maybeCron <- liftIO $ O.runOrville pool $
+    O.findFirstEntityBy cronTable (O.where_ (O.fieldEquals identifierField (Identifier ident)))
+  case maybeCron of
+    Nothing -> throwError err404
+    Just cron -> return cron
+
+
+-----------------------------------------------------------------------------------------------------------
 
 {-
 	{
@@ -198,61 +216,39 @@ postGraphData graph = do
     return NoContent
 
 
-getCronByFormat :: T.Text -> AppMonad Cron
-getCronByFormat formatText = do
-  let format = parseFormat formatText
-  pool <- asks appDbPool
-  maybeCron <- liftIO $ O.runOrville pool $
-    O.findFirstEntityBy cronTable (O.where_ (O.fieldEquals formatField format))
-  case maybeCron of
-    Nothing -> throwError err404
-    Just cron -> return cron
 
-getCronByIdentifier :: T.Text -> AppMonad Cron
-getCronByIdentifier ident = do
-  pool <- asks appDbPool
-  maybeCron <- liftIO $ O.runOrville pool $
-    O.findFirstEntityBy cronTable (O.where_ (O.fieldEquals identifierField (Identifier ident)))
-  case maybeCron of
-    Nothing -> throwError err404
-    Just cron -> return cron
+-----------------------------------------------------------------------------------------------------------
 
 
-parseFormat :: T.Text -> Formats
-parseFormat "Create" = Create (T.pack $ "Create")
-parseFormat "Update" = Update (T.pack $ "Update")
-parseFormat "Delete" = Delete (T.pack $ "Delete")
-parseFormat _        = error "Invalid Format"
-
-
-handleCronFormat :: T.Text -> T.Text -> Cron -> AppMonad NoContent
-handleCronFormat ident format cron = do
-  let newCron = cron { identifier = Identifier ident, format = parseFormat format }
-  postCron newCron
+-- Below functions will be modified later, 
+-- since it must incoporate with Graph table corresponding to request type
 
 handleCreate :: T.Text -> Cron -> AppMonad NoContent
 handleCreate ident cron = do
   let newCron = cron { identifier = Identifier ident, format = Create ident }
   postCron newCron
 
+
+
+
 handleUpdate :: T.Text -> Cron -> AppMonad NoContent
 handleUpdate ident cron = do
   let newCron = cron { identifier = Identifier ident, format = Update ident }
   postCron newCron
+
+
 
 handleDelete :: T.Text -> Cron -> AppMonad NoContent
 handleDelete ident cron = do
   let newCron = cron { identifier = Identifier ident, format = Delete ident }
   postCron newCron
 
-handleGetCronByIdentifier :: T.Text -> AppMonad Cron
-handleGetCronByIdentifier = getCronByIdentifier
 
+-----------------------------------------------------------------------------------------------------------
 
 
 cronServer :: CAppServer
-cronServer = handleCronFormat :<|> handleCreate :<|> handleUpdate :<|> handleDelete :<|> getCronByFormat :<|> postGraphData
-
+cronServer = handleCronFormat :<|> handleCreate :<|> handleUpdate :<|> handleDelete :<|> getCronByFormat :<|> getCronByIdentifier :<|> postGraphData
 
 
 cronApp :: AppConfig -> Application
@@ -261,3 +257,5 @@ cronApp config = logStdoutDev $ serve capi (hoistServer capi (convertApp config)
     convertApp :: AppConfig -> AppMonad a -> Handler a
     convertApp cfg appMonad = Handler $ runReaderT appMonad cfg
 
+
+-----------------------------------------------------------------------------------------------------------
