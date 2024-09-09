@@ -6,30 +6,25 @@
 {-# LANGUAGE BlockArguments #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant return" #-}
-
+{-# OPTIONS_GHC -Wno-unused-do-bind #-}
+{-# LANGUAGE PartialTypeSignatures #-}
 
 
 module CronHandlers where
 
-import Data.Aeson.Types
-import Control.Monad.Except (ExceptT)
 import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Reader (ReaderT, runReaderT, asks)
-import Data.Int (Int32)
+import Control.Monad.Reader (runReaderT, asks)
 import qualified Data.Text as T
-import GHC.Generics (Generic)
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
 import qualified Orville.PostgreSQL as O
 
 import Handler
 import CronMarshaller
-import Data.Maybe
-import qualified Orville.PostgreSQL.Execution as E
 
 ---------------------------------------------------------------------------------------------------
 
---CRON TASK : DATE (6th September 2024)
+--CRON TASK : DATE (9th September 2024)
 
 {-
 
@@ -71,31 +66,33 @@ you can not do create for any identifier more than 1 (maybe primary or unique co
 -}
 
 
-type CronFormat = "cron" :> Capture "identifier" T.Text :> Capture "format" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent
+type CronFormat = "cron" :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent
 
 -----------------------------------------------------------------------------------------------------------
-
-type CronCreate = "create" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent -- this should work with Graph when given any identifier which is present in Cron table when status is Pending in Cron table
-type CronUpdate = "update" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent -- this should work with Graph when given any identifier which is present in Cron table when status is Pending in Cron table
-type CronDelete = "delete" :> Capture "identifier" T.Text :> ReqBody '[JSON] Cron :> Post '[JSON] NoContent -- this should work with Graph when given any identifier which is present in Cron table when status is Pending in Cron table
+type CronCreate = "create" :> Capture "identifier" T.Text :> ReqBody '[JSON] Graph :> Post '[JSON] NoContent
+type CronUpdate = "update" :> Capture "identifier" T.Text :> ReqBody '[JSON] Graph :> Put '[JSON] NoContent
+type CronDelete = "delete" :> Capture "identifier" T.Text :> Delete '[JSON] NoContent
 -- for above 3 need to modify handleCreate/handleUpdate/handleDelete functions
 
------------------------------------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------------------------------------
 
-type CronByFormat = "cron" :> "identifier" :> Capture "identifier" T.Text :> Get '[JSON] Cron
-type CronByIdentifier = "cron" :> Capture "identifier" T.Text :> Get '[JSON] Cron
-type PostGraphData = "cron" :> ReqBody '[JSON] Graph :> Post '[JSON] NoContent
+-- type CronByStatus = "cron" :> "status" :> Capture "status" Status :> Get '[JSON] Cron
+-- it retreive data from cron table based on status == Pending
+-- type CronByFormat = "cron" :> "identifier" :> Capture "identifier" T.Text :> Get '[JSON] Cron
+-- type CronByIdentifier = "cron" :> Capture "identifier" T.Text :> Get '[JSON] Cron
+-- type PostGraphData = "cron" :> ReqBody '[JSON] Graph :> Post '[JSON] NoContent
 
 
 
 type CAPI = 
         CronFormat
    :<|> CronCreate -- handleCreate
-   :<|> CronUpdate -- handleUpdate
-   :<|> CronDelete -- handleDelete
-   :<|> CronByFormat
-   :<|> CronByIdentifier
-   :<|> PostGraphData 
+  --  :<|> CronUpdate -- handleUpdate
+  --  :<|> CronDelete -- handleDelete
+  -- --  :<|> CronByStatus
+  --  :<|> CronByFormat
+  --  :<|> CronByIdentifier
+  --  :<|> PostGraphData 
 
 
 type CAppServer = ServerT CAPI AppMonad
@@ -105,66 +102,9 @@ capi = Proxy
 
 -----------------------------------------------------------------------------------------------------------
 
-
-{-
-http://localhost:3000/cron/123/Create-Update-Delete
-{
-  "cronId": 3,
-  "format": { "tag" : "Create" , "contents" : "It's Create Request" },
-  "status": { "tag" : "Pending" , "contents" : "It's Pending Status For Create Request" },
-	"identifier" : "123" ,
-  "dataField": {
-		"name" : "PQR" , 
-		"age" : 34,
-		"mobile" : 9876
-	
-	}
-}
-
-----------------------------------------------------------------
-http://localhost:3000/cron/123/Delete-Create-Update [404]
-http://localhost:3000/cron/123/AnyFormat ["Expected Shows"]
-
-
-{
-  "cronId": 10,
-  "format": { "tag" : "AnyFormat" , "contents" : "It's Create Request" },
-  "status": { "tag" : "Pending" , "contents" : "It's Pending Status For Create Request" },
-	"identifier" : "123" ,
-  "dataField": {
-		"name" : "PQR" , 
-		"age" : 34,
-		"mobile" : 9876
-	
-	}
-}
-
--}
-
 -----------------------------------------------------------------------------------------------------------
 
-postCron :: Cron -> AppMonad NoContent
-postCron cron = do
-  pool <- asks appDbPool
-  liftIO $ O.runOrville pool $ do
-    -- Insert into cron table
-    _ <- O.insertEntity cronTable cron
-    case status cron of
-      Pending _ -> do
-        let person = dataField cron
-        -- -- Insert into graph table
-        _ <- O.insertEntity graphTable (Graph { g_details = person })
-        return ()
-      _ -> return ()
-    
-    return NoContent
 
-
--- Checking format from parseFormat function
-handleCronFormat :: T.Text -> T.Text -> Cron -> AppMonad NoContent
-handleCronFormat ident format cron = do
-  let newCron = cron { identifier = Identifier ident, format = parseFormat format }
-  postCron newCron
 
 parseFormat :: T.Text -> Formats
 parseFormat "Create" = Create (T.pack $ "Create")
@@ -172,7 +112,20 @@ parseFormat "Update" = Update (T.pack $ "Update")
 parseFormat "Delete" = Delete (T.pack $ "Delete")
 parseFormat _        = error "Invalid Format"
 
------------------------------------------------------------------------------------------------------------
+
+postCron :: Cron -> AppMonad NoContent
+postCron cron = do
+  pool <- asks appDbPool
+  liftIO $ O.runOrville pool $ do
+    -- Insert the Cron entity into the Cron table
+    _ <- O.insertEntity cronTable cron
+    return NoContent
+
+
+handleCron :: T.Text -> T.Text -> Cron -> AppMonad NoContent
+handleCron ident status cron = do
+  let newCron = cron { identifier = Identifier ident, status = parseStatus status }
+  postCron newCron
 
 
 getCronByFormat :: T.Text -> AppMonad Cron
@@ -186,6 +139,27 @@ getCronByFormat formatText = do
     Just cron -> return cron
 
 
+-----------------------------------------------------------------------------------------------------------
+
+getCronByStatus :: T.Text-> AppMonad Cron
+getCronByStatus statusText = do 
+  let status = parseStatus statusText
+  pool <- asks appDbPool 
+  maybeCron <- liftIO $ O.runOrville pool $ 
+    O.findFirstEntityBy cronTable (O.where_ (O.fieldEquals statusField status))
+  case maybeCron of 
+    Just cron -> return cron 
+    Nothing -> throwError err404
+
+
+
+parseStatus :: T.Text -> Status
+parseStatus "Pending" = Pending (T.pack $ "Pending")
+parseStatus "Success" = Success (T.pack $ "Success")
+parseStatus _        = error "Invalid Status"
+
+
+-----------------------------------------------------------------------------------------------------------
 
 getCronByIdentifier :: T.Text -> AppMonad Cron
 getCronByIdentifier ident = do
@@ -198,15 +172,6 @@ getCronByIdentifier ident = do
 
 
 -----------------------------------------------------------------------------------------------------------
-
-{-
-	{
-	"g_details" : {
-		"name" : "ABC" ,
-		"age" : 34 ,
-	  "mobile" : 4567898
-	}
--}
 
 postGraphData :: Graph -> AppMonad NoContent
 postGraphData graph = do 
@@ -222,33 +187,34 @@ postGraphData graph = do
 
 -- Below functions will be modified later, 
 -- since it must incoporate with Graph table corresponding to request type
+    
+handleCreate :: T.Text -> Graph -> AppMonad NoContent
+handleCreate ident graph = do
+  pool <- asks appDbPool
+  maybeCron <- liftIO $ O.runOrville pool $
+    O.findFirstEntityBy cronTable (O.where_ (O.fieldEquals identifierField (Identifier ident)))
+  case maybeCron of
+    Just cron -> case status cron of
+      Pending _ -> do
+        -- Insert Graph data only if status is Pending
+        liftIO $ O.runOrville pool $ O.insertEntity graphTable graph
+        return NoContent
+      _ -> throwError err400  -- If the status is not Pending, return an error
+    Nothing -> throwError err404  -- If the Cron record is not found
 
-handleCreate :: T.Text -> Cron -> AppMonad NoContent
-handleCreate ident cron = do
-  let newCron = cron { identifier = Identifier ident, format = Create ident }
-  postCron newCron
 
 
 
-
-handleUpdate :: T.Text -> Cron -> AppMonad NoContent
-handleUpdate ident cron = do
-  let newCron = cron { identifier = Identifier ident, format = Update ident }
-  postCron newCron
-
-
-
-handleDelete :: T.Text -> Cron -> AppMonad NoContent
-handleDelete ident cron = do
-  let newCron = cron { identifier = Identifier ident, format = Delete ident }
-  postCron newCron
 
 
 -----------------------------------------------------------------------------------------------------------
 
 
 cronServer :: CAppServer
-cronServer = handleCronFormat :<|> handleCreate :<|> handleUpdate :<|> handleDelete :<|> getCronByFormat :<|> getCronByIdentifier :<|> postGraphData
+cronServer = 
+         postCron 
+    :<|> handleCreate 
+
 
 
 cronApp :: AppConfig -> Application
@@ -259,3 +225,4 @@ cronApp config = logStdoutDev $ serve capi (hoistServer capi (convertApp config)
 
 
 -----------------------------------------------------------------------------------------------------------
+

@@ -18,7 +18,7 @@ import Data.Aeson (FromJSON, ToJSON, decode, encode, toJSON)
 
 ---------------------------------------------------------------------------------------------------
 
---CRON TASK : DATE (6th September 2024)
+--CRON TASK : DATE (9th September 2024)
 
 {-
 
@@ -125,10 +125,20 @@ cronTable =
 
 
 --------------------------------------------------------------------------------------------------
+
+-- newtype GraphId = GraphId Int32 deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
+
 data Graph = Graph
   { 
+    g_id :: CronId ,
     g_details :: Person 
   } deriving (Show, Generic, FromJSON, ToJSON)
+
+
+
+graphIdField :: O.FieldDefinition O.NotNull CronId
+graphIdField  = O.coerceField (O.integerField "g_id")
 
 
 graphDetailsField :: O.FieldDefinition O.NotNull Person 
@@ -139,14 +149,16 @@ graphDetailsField = O.convertField jsonByteStringConversion(O.coerceField  $ O.u
 graphMarshaller :: O.SqlMarshaller Graph Graph
 graphMarshaller =
   Graph
-    <$> O.marshallField g_details graphDetailsField
+    <$> O.marshallField g_id graphIdField
+    <*> O.marshallField g_details graphDetailsField
   
 
 
-graphTable :: O.TableDefinition O.NoKey Graph Graph
+graphTable :: O.TableDefinition (O.HasKey CronId) Graph Graph
 graphTable =
-  O.mkTableDefinitionWithoutKey
-    "graph" 
+  O.mkTableDefinition
+    "graph"
+    (O.primaryKey graphIdField) 
     graphMarshaller
 
 
