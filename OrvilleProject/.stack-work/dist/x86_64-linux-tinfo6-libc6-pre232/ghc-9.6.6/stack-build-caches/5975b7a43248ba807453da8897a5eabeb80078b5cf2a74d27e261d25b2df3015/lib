@@ -13,9 +13,9 @@
 /app/src/Configuration.hs:
   hash: c5cc47f5027e8df31ad6a3001faa7ce4e09337b5df9dfb01e86d48690d91fb73
 /app/src/CronHandlers.hs:
-  hash: 2b23d740397d53e6911b8dfe808815e5c124075216ef9a63b89d353a2e3f1e6b
+  hash: 19ff5822308f421a0e99907b2b61e1edfe1d94d5bf5c3d0771d7913eca26f599
 /app/src/CronMarshaller.hs:
-  hash: cf7a0173b72034c392a23d75c778c49d0dafe61365987040987585b5ba8c022b
+  hash: cfbd5cf48f1ee4a671064efca8bf94e3ba8b90aa4e9a3602c6269884ed74de77
 /app/src/Handler.hs:
   hash: 7e416678c3c7996fb4dfaa640d191d51b6eb7040d02e7c8bb843fee7a65c1df3
 /app/src/Marshaller.hs:

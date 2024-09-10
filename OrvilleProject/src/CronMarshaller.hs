@@ -18,7 +18,7 @@ import Data.Aeson (FromJSON, ToJSON, decode, encode, toJSON)
 
 ---------------------------------------------------------------------------------------------------
 
---CRON TASK : DATE (9th September 2024)
+--CRON TASK : DATE (10th September 2024)
 
 {-
 
@@ -28,15 +28,6 @@ APIs
 2. /create/identifier
 3. /update/identifier
 4. /delete//identifier
-
-Tables
-
-For 1. {id , format , status , identifier , data}
-
-Data { name , age }
-
-For 2. 
-
 
 -}
 
@@ -125,9 +116,6 @@ cronTable =
 
 
 --------------------------------------------------------------------------------------------------
-
--- newtype GraphId = GraphId Int32 deriving (Show, Eq, Generic, FromJSON, ToJSON)
-
 
 data Graph = Graph
   { 
