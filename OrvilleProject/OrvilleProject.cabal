@@ -41,6 +41,7 @@ library
       aeson
     , base >=4.7 && <5
     , extra
+    , hashable
     , mtl
     , orville-postgresql
     , postgresql-libpq
@@ -67,6 +68,7 @@ executable OrvilleProject-exe
     , aeson
     , base >=4.7 && <5
     , extra
+    , hashable
     , mtl
     , orville-postgresql
     , postgresql-libpq
@@ -94,6 +96,7 @@ test-suite OrvilleProject-test
     , aeson
     , base >=4.7 && <5
     , extra
+    , hashable
     , mtl
     , orville-postgresql
     , postgresql-libpq

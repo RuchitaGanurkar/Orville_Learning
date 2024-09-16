@@ -33,7 +33,7 @@ dependencies:
 - orville-postgresql
 - resource-pool
 - extra
-
+- hashable
 
 ghc-options:
 - -Wall

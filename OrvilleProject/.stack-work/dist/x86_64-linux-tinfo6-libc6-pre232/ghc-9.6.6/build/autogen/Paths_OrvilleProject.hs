@@ -47,7 +47,7 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 bindir     = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/bin"
-libdir     = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/lib/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0-9FRNjfwkG609UGt2yK2Kmr"
+libdir     = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/lib/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0-H4ZS2J8wlb2KMEvDbVduOz"
 dynlibdir  = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/lib/x86_64-linux-ghc-9.6.6"
 datadir    = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/share/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"
 libexecdir = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/libexec/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"

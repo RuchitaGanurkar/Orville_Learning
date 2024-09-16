@@ -47,7 +47,7 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 bindir     = "/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/install/x86_64-linux/c4ab08be7f5842af06d1eae594ce963bafdd7de54c966f0b508548ab79f76570/9.6.6/bin"
-libdir     = "/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/install/x86_64-linux/c4ab08be7f5842af06d1eae594ce963bafdd7de54c966f0b508548ab79f76570/9.6.6/lib/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0-9FRNjfwkG609UGt2yK2Kmr"
+libdir     = "/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/install/x86_64-linux/c4ab08be7f5842af06d1eae594ce963bafdd7de54c966f0b508548ab79f76570/9.6.6/lib/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0-H4ZS2J8wlb2KMEvDbVduOz"
 dynlibdir  = "/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/install/x86_64-linux/c4ab08be7f5842af06d1eae594ce963bafdd7de54c966f0b508548ab79f76570/9.6.6/lib/x86_64-linux-ghc-9.6.6"
 datadir    = "/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/install/x86_64-linux/c4ab08be7f5842af06d1eae594ce963bafdd7de54c966f0b508548ab79f76570/9.6.6/share/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"
 libexecdir = "/home/adming10x/G10X/SPUR/Orville_Learning/OrvilleProject/.stack-work/install/x86_64-linux/c4ab08be7f5842af06d1eae594ce963bafdd7de54c966f0b508548ab79f76570/9.6.6/libexec/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"

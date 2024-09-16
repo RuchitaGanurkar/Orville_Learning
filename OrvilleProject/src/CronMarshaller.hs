@@ -14,11 +14,11 @@ import Data.Text.Lazy.Encoding (encodeUtf8, decodeUtf8)
 import qualified Data.Text.Lazy as LT
 import qualified Data.Either.Extra as Extra
 import Data.Aeson (FromJSON, ToJSON, decode, encode, toJSON)
-
+import qualified Data.Hashable as H
 
 ---------------------------------------------------------------------------------------------------
 
---CRON TASK : DATE (10th September 2024)
+--CRON TASK : DATE (17th September 2024)
 
 {-
 
@@ -69,8 +69,6 @@ data Cron = Cron
 
 
 
-
-
 -- Field Definitions
 cronIdField :: O.FieldDefinition O.NotNull CronId
 cronIdField = O.coerceField (O.integerField "id")
@@ -107,6 +105,8 @@ cronMarshaller =
     <*> O.marshallField identifier identifierField
     <*> O.marshallField dataField checkDataField
 
+
+
 cronTable :: O.TableDefinition (O.HasKey CronId) Cron Cron
 cronTable =
   O.mkTableDefinition
@@ -117,20 +117,59 @@ cronTable =
 
 --------------------------------------------------------------------------------------------------
 
+
+
+
+
+data Address = Address {
+  a_building :: T.Text ,
+  a_street :: T.Text ,
+  a_city :: T.Text ,
+  a_state :: T.Text ,
+  a_country :: T.Text 
+} deriving (Show , FromJSON , ToJSON , Generic)
+
+newtype BankAccount = BankAccount { unBankAccount :: T.Text }
+  deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
+class PII a where 
+  hash :: a -> T.Text
+
+
+instance PII BankAccount where 
+  hash (BankAccount input) = T.pack (show $ H.hash input)
+
+
 data Graph = Graph
   { 
     g_id :: CronId ,
+    g_identifier :: Identifier ,
+    g_address :: Address ,
+    g_bank_account :: T.Text ,
     g_details :: Person 
   } deriving (Show, Generic, FromJSON, ToJSON)
 
 
 
 graphIdField :: O.FieldDefinition O.NotNull CronId
-graphIdField  = O.coerceField (O.integerField "g_id")
+graphIdField = O.coerceField (O.integerField "g_id")
+
+
+graphIdentifierField ::  O.FieldDefinition O.NotNull Identifier
+graphIdentifierField = O.coerceField (O.unboundedTextField "g_identifier")
+
+
+graphAddressField :: O.FieldDefinition O.NotNull Address
+graphAddressField = O.convertField jsonByteStringConversion (O.jsonbField "g_address")
+
+
+graphBankAccountField :: O.FieldDefinition O.NotNull T.Text
+graphBankAccountField = O.coerceField $ O.unboundedTextField "g_bank_account"
 
 
 graphDetailsField :: O.FieldDefinition O.NotNull Person 
-graphDetailsField = O.convertField jsonByteStringConversion(O.coerceField  $ O.unboundedTextField "g_details") 
+graphDetailsField = O.convertField jsonByteStringConversion $ O.coerceField  $ O.unboundedTextField "g_details" 
+
 
 
 --Graph Marshaller || Use marshallReadOnly
@@ -138,6 +177,9 @@ graphMarshaller :: O.SqlMarshaller Graph Graph
 graphMarshaller =
   Graph
     <$> O.marshallField g_id graphIdField
+    <*> O.marshallField g_identifier graphIdentifierField
+    <*> O.marshallField g_address graphAddressField
+    <*> O.marshallField g_bank_account graphBankAccountField
     <*> O.marshallField g_details graphDetailsField
   
 
