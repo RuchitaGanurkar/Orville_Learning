@@ -13,12 +13,15 @@ import qualified Orville.PostgreSQL as O
 import Data.Text.Lazy.Encoding (encodeUtf8, decodeUtf8)
 import qualified Data.Text.Lazy as LT
 import qualified Data.Either.Extra as Extra
-import Data.Aeson (FromJSON, ToJSON, decode, encode, toJSON)
+import Data.Aeson (FromJSON, ToJSON, decode, encode, toJSON, withObject, object)
 import qualified Data.Hashable as H
+import Data.Aeson.Types (parseJSON)
+import Data.Aeson ((.:))
+import Data.Aeson ((.=))
 
 ---------------------------------------------------------------------------------------------------
 
---CRON TASK : DATE (17th September 2024)
+--CRON TASK : DATE (18th September 2024)
 
 {-
 
@@ -45,7 +48,28 @@ data Formats
     = Create T.Text
     | Update T.Text
     | Delete T.Text
-    deriving (Show, Eq, Generic, FromJSON, ToJSON)
+    deriving (Show, Eq, Generic)
+
+
+
+instance FromJSON Formats where
+    parseJSON = withObject "Formats" $ \v -> do
+      tag <- v .: "tag"
+      case (tag :: String) of
+        "Create" -> Create <$> v .: "value"
+        "Update" -> Update <$> v .: "value"
+        "Delete" -> Delete <$> v .: "value"
+        _ -> fail "Invalid tag for Formats"
+
+instance ToJSON Formats where
+    toJSON (Create value) = object ["tag" .= ("Create" :: T.Text), "value" .= value]
+    toJSON (Update value) = object ["tag" .= ("Update" :: T.Text), "value" .= value]
+    toJSON (Delete value) = object ["tag" .= ("Delete" :: T.Text), "value" .= value]
+
+
+
+
+
 
 
 newtype PersonName = PersonName T.Text deriving (Show, Eq, Generic , FromJSON , ToJSON)
@@ -138,7 +162,6 @@ class PII a where
 
 instance PII BankAccount where 
   hash (BankAccount input) = T.pack (show $ H.hash input)
-
 
 data Graph = Graph
   { 

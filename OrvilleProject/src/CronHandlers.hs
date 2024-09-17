@@ -8,6 +8,7 @@
 {-# HLINT ignore "Redundant return" #-}
 {-# OPTIONS_GHC -Wno-unused-do-bind #-}
 {-# LANGUAGE PartialTypeSignatures #-}
+{-# OPTIONS_GHC -Wno-unused-local-binds #-}
 
 
 module CronHandlers where
@@ -25,7 +26,7 @@ import Control.Monad (forM_)
 
 ---------------------------------------------------------------------------------------------------
 
--- CRON TASK : DATE (17th September 2024)
+-- CRON TASK : DATE (18th September 2024)
 
 {-
 
@@ -83,38 +84,48 @@ postCron cron = do
 -- Insert data into Graph Table if Format == Create && Status == Pending in Cron Table
 -- Identifier must be uniquely used for each entry
 
-
-
 handleCreate :: T.Text -> Graph -> AppMonad NoContent
 handleCreate ident graph = do
   pool <- asks appDbPool
-  -- Find the Cron entries by identifier
-  result <- liftIO $ O.runOrville pool $
-    O.findEntitiesBy cronTable (O.where_ (O.fieldEquals identifierField $ Identifier ident))
+  let loop = do
+        -- Find the Cron entries by identifier
+        result <- liftIO $ O.runOrville pool $
+          O.findEntitiesBy cronTable (O.where_ (O.fieldEquals identifierField $ Identifier ident))
 
-  forM_ result $ \cron -> do
-    case (format cron, status cron) of
- 
-      (Create _, Pending _) -> do
-        -- Insert into Graph table
-        _ <- liftIO $ O.runOrville pool $ O.insertEntity graphTable (Graph (cronId cron) (Identifier ident) (g_address graph) (g_bank_account graph) (dataField cron) )
+        forM_ result $ \cron -> do
+          case (format cron, status cron) of
 
-        let output = cron { status = Success "Success" }
-        _  <- liftIO $ O.runOrville pool $ O.updateEntity cronTable (cronId cron) output
+            (Create _, Pending _) -> do
+              -- Insert into Graph table
+              _ <- liftIO $ O.runOrville pool $ 
+                O.insertEntity graphTable 
+                (Graph (cronId cron)
+                       (Identifier ident) 
+                       (g_address graph) 
+                       (g_bank_account graph) 
+                       (dataField cron))
+
+              -- Update Cron status to 'Success'
+              let output = cron { status = Success "Success" }
+              _ <- liftIO $ O.runOrville pool $ 
+                O.updateEntity cronTable (cronId cron) output
+              return NoContent
+
+            (Update _, _) -> 
+              throwError err400 { errBody = "Cannot create as the format is 'Update'" } -- check for Update format
+            (Delete _, _) -> 
+              throwError err400 { errBody = "Cannot create as the format is 'Delete'" } -- check for Delete format
+            
+            -- Invalid status are handled here | Irrespective of any format
+            (_, Success _) -> 
+              throwError err400 { errBody = "Cannot create as the status is 'Success'" }
+            (_, Error _) -> 
+              throwError err400 { errBody = "Cannot create as the status is 'Error'" }
+
         return NoContent
-        -- Check if the update was successful
-        -- if count > 0
-        --   then return NoContent
-        --   else throwError err500 { errBody = "Failed to update the Cron status to 'Success'" }
-
-     
-      (Update _, _) -> throwError err400 { errBody = "Cannot create as the format is 'Update'" }
-      (Delete _, _) -> throwError err400 { errBody = "Cannot create as the format is 'Delete'" }
+  loop  -- Infinite loop
 
 
-      (_, Success _) -> throwError err400 { errBody = "Cannot create as the status is 'Success'" }
-      (_, Error _) -> throwError err400 { errBody = "Cannot create as the status is 'Error'" }
-  return NoContent
 
 -- Implement logic of deleting cron job entry from cronTable which is being added to graphTable 
 -- or change status of same entry to success 
@@ -125,48 +136,38 @@ handleCreate ident graph = do
 -- Identifier must be uniquely used for each entry
 -- It accept Graph in request body
 
+
 handleUpdate :: T.Text -> Graph -> AppMonad NoContent
 handleUpdate ident graph = do
   pool <- asks appDbPool
+  let loop = do
+        result <- liftIO $ O.runOrville pool $
+          O.findEntitiesBy cronTable (O.where_ (O.fieldEquals identifierField $ Identifier ident))
+        
+        -- Process the cron entries
+        forM_ result $ \cron -> do
+          case (format cron, status cron) of
+            -- Check if the format is 'Update' and the status is 'Pending'
+            (Update _, Pending _) -> do
+              -- Update the Graph table with values from the request body (graph)
+              
+              _ <- liftIO $ O.runOrville pool $ O.updateEntity graphTable (g_id graph) graph  -- assumed g_id is Primary Key for Graph table
+              -- Update Cron status to 'Success'
+              let output = cron { status = Success "Success" }
+              _ <- liftIO $ O.runOrville pool $ O.updateEntity cronTable (cronId cron) output
+      
+              return ()
+      
+            -- Handle invalid formats
+            (Create _, _) -> throwError err400 { errBody = "Cannot update as the format is 'Create'" }
+            (Delete _, _) -> throwError err400 { errBody = "Cannot update as the format is 'Delete'" }
+      
+            -- Invalid status are handled here | Irrespective of any format
+            (_, Success _) -> throwError err400 { errBody = "Cannot update as the status is 'Success'" }
+            (_, Error _) -> throwError err400 { errBody = "Cannot update as the status is 'Error'" }
 
-  -- Find all Cron entries by identifier
-  cronEntries <- liftIO $ O.runOrville pool $
-    O.findEntitiesBy cronTable (O.where_ (O.fieldEquals identifierField $ Identifier ident))
-
-  -- Check if there are any entries
-  if null cronEntries
-    then throwError err404 { errBody = "Cron record not found" }
-    else do
-      -- Process each Cron entry
-      forM_ cronEntries $ \cron -> do
-        case (format cron, status cron) of
-          -- Update and Pending
-          (Update _, Pending _) -> do
-            -- Update Graph Table Entry
-            count <- liftIO $ O.runOrville pool $ O.updateEntityAndReturnRowCount graphTable (cronId cron) graph
-            if count > 0
-              then do
-                -- Update the status of the Cron entry to 'Success'
-                let output = cron { status = Success "Success" }
-                updated_count <- liftIO $ O.runOrville pool $ O.updateEntityAndReturnRowCount cronTable (cronId cron) output
-                if updated_count <= 0
-                  then throwError err500 { errBody = "Failed to update the Cron status to 'Success'" }
-                  else throwError err400 { errBody = "Failed to update the Graph table" }
-                else throwError err400 { errBody = "Failed to update the Graph table" }
-
-          (Create _, _) -> throwError err400 { errBody = "Cannot update as the format is 'Create'" }
-          (Delete _, _) -> throwError err400 { errBody = "Cannot update as the format is 'Delete'" }
-            -- Handle Success and Error statuses
-          (_, Success _) -> throwError err400 { errBody = "Cannot update as the status is 'Success'" }
-          (_, Error _) -> throwError err400 { errBody = "Cannot update as the status is 'Error'" }
-                -- Check if the update was successful
-
-      -- Return NoContent if all operations succeed
-  return NoContent
-
-
-
-
+        return NoContent
+  loop
 -----------------------------------------------------------------------------------------------------------
 
 
