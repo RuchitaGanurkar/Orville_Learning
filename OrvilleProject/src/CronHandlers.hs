@@ -19,11 +19,9 @@ import qualified Data.Text as T
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
 import qualified Orville.PostgreSQL as O
-
 import Handler
 import CronMarshaller
 import Control.Monad (forM_)
-
 ---------------------------------------------------------------------------------------------------
 
 -- CRON TASK : DATE (18th September 2024)
@@ -40,7 +38,7 @@ APIs
 
 PII : Personally Identifiable Information
 
-
+1. Bank Account details to encrypt - decrypt
 
 
 
@@ -71,7 +69,7 @@ capi = Proxy
 -- cronId | identifier : Must Be Unique
 
 
-
+-- Only Cron fields are required
 postCron :: Cron -> AppMonad NoContent
 postCron cron = do
   pool <- asks appDbPool
@@ -83,6 +81,11 @@ postCron cron = do
 -- This method will check for Format | Status 
 -- Insert data into Graph Table if Format == Create && Status == Pending in Cron Table
 -- Identifier must be uniquely used for each entry
+
+
+
+-- Cron fields would be fetched from cron table
+-- Graph fields would be provided in request body along with ban account fields
 
 handleCreate :: T.Text -> Graph -> AppMonad NoContent
 handleCreate ident graph = do
@@ -96,13 +99,17 @@ handleCreate ident graph = do
           case (format cron, status cron) of
 
             (Create _, Pending _) -> do
+
+              let originalBankAccount = g_bank_account graph
+                  encyption_details = encryptBankAccount originalBankAccount  --Fetching account details from graph and applying function
+
               -- Insert into Graph table
               _ <- liftIO $ O.runOrville pool $ 
                 O.insertEntity graphTable 
                 (Graph (cronId cron)
                        (Identifier ident) 
                        (g_address graph) 
-                       (g_bank_account graph) 
+                       encyption_details -- g_bank_account is encrypted here
                        (dataField cron))
 
               -- Update Cron status to 'Success'
@@ -137,6 +144,9 @@ handleCreate ident graph = do
 -- It accept Graph in request body
 
 
+
+-- Graph fields would be provided in request body along with ban account fields
+
 handleUpdate :: T.Text -> Graph -> AppMonad NoContent
 handleUpdate ident graph = do
   pool <- asks appDbPool
@@ -149,9 +159,16 @@ handleUpdate ident graph = do
           case (format cron, status cron) of
             -- Check if the format is 'Update' and the status is 'Pending'
             (Update _, Pending _) -> do
+
+              let originalBankAccount = g_bank_account graph
+                  encyption_details = encryptBankAccount originalBankAccount
+
+              -- Update the Graph table with the encrypted BankAccount
+              let updatedGraph = graph { g_bank_account = encyption_details }
+
               -- Update the Graph table with values from the request body (graph)
               
-              _ <- liftIO $ O.runOrville pool $ O.updateEntity graphTable (g_id graph) graph  -- assumed g_id is Primary Key for Graph table
+              _ <- liftIO $ O.runOrville pool $ O.updateEntity graphTable (g_id graph) updatedGraph  -- assumed g_id is Primary Key for Graph table
               -- Update Cron status to 'Success'
               let output = cron { status = Success "Success" }
               _ <- liftIO $ O.runOrville pool $ O.updateEntity cronTable (cronId cron) output

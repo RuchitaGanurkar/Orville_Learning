@@ -46,12 +46,12 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
-bindir     = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/bin"
-libdir     = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/lib/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0-HLU5s2jHyI268VoTJskCmy-OrvilleProject-exe"
-dynlibdir  = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/lib/x86_64-linux-ghc-9.6.6"
-datadir    = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/share/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"
-libexecdir = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/libexec/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"
-sysconfdir = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/5975b7a43248ba807453da8897a5eabeb80078b5cf2a74d27e261d25b2df3015/9.6.6/etc"
+bindir     = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/277f5894aa83dfae7035983f748fb4faf9a09afedffe0246fbf6e1f8a4c4fb87/9.6.6/bin"
+libdir     = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/277f5894aa83dfae7035983f748fb4faf9a09afedffe0246fbf6e1f8a4c4fb87/9.6.6/lib/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0-6RBWpzYcxkRJLXeZ35eXd4-OrvilleProject-exe"
+dynlibdir  = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/277f5894aa83dfae7035983f748fb4faf9a09afedffe0246fbf6e1f8a4c4fb87/9.6.6/lib/x86_64-linux-ghc-9.6.6"
+datadir    = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/277f5894aa83dfae7035983f748fb4faf9a09afedffe0246fbf6e1f8a4c4fb87/9.6.6/share/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"
+libexecdir = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/277f5894aa83dfae7035983f748fb4faf9a09afedffe0246fbf6e1f8a4c4fb87/9.6.6/libexec/x86_64-linux-ghc-9.6.6/OrvilleProject-0.1.0.0"
+sysconfdir = "/app/.stack-work/install/x86_64-linux-tinfo6-libc6-pre232/277f5894aa83dfae7035983f748fb4faf9a09afedffe0246fbf6e1f8a4c4fb87/9.6.6/etc"
 
 getBinDir     = catchIO (getEnv "OrvilleProject_bindir")     (\_ -> return bindir)
 getLibDir     = catchIO (getEnv "OrvilleProject_libdir")     (\_ -> return libdir)

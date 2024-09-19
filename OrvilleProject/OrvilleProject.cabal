@@ -40,8 +40,11 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , base64-bytestring
+    , bytestring
     , extra
     , hashable
+    , hpack
     , mtl
     , orville-postgresql
     , postgresql-libpq
@@ -67,8 +70,11 @@ executable OrvilleProject-exe
       OrvilleProject
     , aeson
     , base >=4.7 && <5
+    , base64-bytestring
+    , bytestring
     , extra
     , hashable
+    , hpack
     , mtl
     , orville-postgresql
     , postgresql-libpq
@@ -95,8 +101,11 @@ test-suite OrvilleProject-test
       OrvilleProject
     , aeson
     , base >=4.7 && <5
+    , base64-bytestring
+    , bytestring
     , extra
     , hashable
+    , hpack
     , mtl
     , orville-postgresql
     , postgresql-libpq

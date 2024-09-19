@@ -34,6 +34,13 @@ dependencies:
 - resource-pool
 - extra
 - hashable
+- hpack
+- base64-bytestring
+- bytestring
+# - base64
+
+
+
 
 ghc-options:
 - -Wall

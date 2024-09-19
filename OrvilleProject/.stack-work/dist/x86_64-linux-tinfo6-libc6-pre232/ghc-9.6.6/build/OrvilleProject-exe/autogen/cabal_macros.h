@@ -40,6 +40,26 @@
   (major1) == 4 && (major2) <  18 || \
   (major1) == 4 && (major2) == 18 && (minor) <= 2)
 #endif /* MIN_VERSION_base */
+/* package base64-bytestring-1.2.1.0 */
+#ifndef VERSION_base64_bytestring
+#define VERSION_base64_bytestring "1.2.1.0"
+#endif /* VERSION_base64_bytestring */
+#ifndef MIN_VERSION_base64_bytestring
+#define MIN_VERSION_base64_bytestring(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  2 || \
+  (major1) == 1 && (major2) == 2 && (minor) <= 1)
+#endif /* MIN_VERSION_base64_bytestring */
+/* package bytestring-0.11.5.3 */
+#ifndef VERSION_bytestring
+#define VERSION_bytestring "0.11.5.3"
+#endif /* VERSION_bytestring */
+#ifndef MIN_VERSION_bytestring
+#define MIN_VERSION_bytestring(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  11 || \
+  (major1) == 0 && (major2) == 11 && (minor) <= 5)
+#endif /* MIN_VERSION_bytestring */
 /* package extra-1.7.16 */
 #ifndef VERSION_extra
 #define VERSION_extra "1.7.16"
@@ -60,6 +80,16 @@
   (major1) == 1 && (major2) <  4 || \
   (major1) == 1 && (major2) == 4 && (minor) <= 4)
 #endif /* MIN_VERSION_hashable */
+/* package hpack-0.37.0 */
+#ifndef VERSION_hpack
+#define VERSION_hpack "0.37.0"
+#endif /* VERSION_hpack */
+#ifndef MIN_VERSION_hpack
+#define MIN_VERSION_hpack(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  37 || \
+  (major1) == 0 && (major2) == 37 && (minor) <= 0)
+#endif /* MIN_VERSION_hpack */
 /* package mtl-2.3.1 */
 #ifndef VERSION_mtl
 #define VERSION_mtl "2.3.1"
@@ -243,7 +273,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "OrvilleProject-0.1.0.0-HLU5s2jHyI268VoTJskCmy-OrvilleProject-exe"
+#define CURRENT_COMPONENT_ID "OrvilleProject-0.1.0.0-6RBWpzYcxkRJLXeZ35eXd4-OrvilleProject-exe"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

@@ -45,6 +45,8 @@ extra-deps:
   commit: 38f42e06032e31f5ed81b447853b756aecb08209
   subdirs:
   - orville-postgresql
+- git : https://github.com/sol/hpack.git
+  commit : bb472cce37d477c8d4dd619d22cdbb4f956c3e82
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

@@ -17,6 +17,17 @@ packages:
     commit: 38f42e06032e31f5ed81b447853b756aecb08209
     git: https://github.com/flipstone/orville.git
     subdir: orville-postgresql
+- completed:
+    commit: bb472cce37d477c8d4dd619d22cdbb4f956c3e82
+    git: https://github.com/sol/hpack.git
+    name: hpack
+    pantry-tree:
+      sha256: 1264cb02665c98d666b2c7412bf7be247292cc9634014c38f4dfe21010205052
+      size: 4493
+    version: 0.37.0
+  original:
+    commit: bb472cce37d477c8d4dd619d22cdbb4f956c3e82
+    git: https://github.com/sol/hpack.git
 snapshots:
 - completed:
     sha256: acaab6ca693211938d1542abcb1c83a2f298b9f6b571854a9d38febe39b6408e

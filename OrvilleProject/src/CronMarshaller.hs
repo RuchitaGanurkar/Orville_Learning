@@ -1,25 +1,34 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE RecordWildCards #-}
 
+{-# LANGUAGE UndecidableInstances #-}
 
 module CronMarshaller where
+import qualified Data.Either.Extra as Extra
+import Data.Aeson.Types (parseJSON)
+import Data.Aeson
+    ( (.=),
+      (.:),
+      FromJSON,
+      ToJSON,
+      decode,
+      encode,
+      toJSON,
+      withObject,
+      object )
 
 import Data.Int (Int32)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 import qualified Orville.PostgreSQL as O
-import Data.Text.Lazy.Encoding (encodeUtf8, decodeUtf8)
+import Data.Text.Lazy.Encoding (decodeUtf8, encodeUtf8)
 import qualified Data.Text.Lazy as LT
-import qualified Data.Either.Extra as Extra
-import Data.Aeson (FromJSON, ToJSON, decode, encode, toJSON, withObject, object)
-import qualified Data.Hashable as H
-import Data.Aeson.Types (parseJSON)
-import Data.Aeson ((.:))
-import Data.Aeson ((.=))
+import qualified Data.ByteString.Base64 as B64 (encode, decode)
+import qualified Data.Text.Encoding as TE (encodeUtf8, decodeUtf8)
 
----------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------
 
 --CRON TASK : DATE (18th September 2024)
 
@@ -104,7 +113,7 @@ statusField :: O.FieldDefinition O.NotNull Status
 statusField = O.convertField jsonByteStringConversion ( O.coerceField (O.unboundedTextField "status"))
 
 identifierField :: O.FieldDefinition O.NotNull Identifier
-identifierField = O.convertField  jsonByteStringConversion(O.coerceField (O.unboundedTextField "identifier"))
+identifierField = O.convertField  jsonByteStringConversion (O.coerceField (O.unboundedTextField "identifier"))
 
 checkDataField :: O.FieldDefinition O.NotNull Person
 checkDataField = O.convertField jsonByteStringConversion (O.jsonbField "data")
@@ -112,10 +121,10 @@ checkDataField = O.convertField jsonByteStringConversion (O.jsonbField "data")
 -- since we are using data type to be stored in Cron in JSON format
 -- to match with DB table type we are converting things into SqlType
 
+
 jsonByteStringConversion :: (FromJSON a, ToJSON a) => O.SqlType T.Text -> O.SqlType a
 jsonByteStringConversion =
   O.tryConvertSqlType (LT.toStrict . decodeUtf8 . encode . toJSON) (Extra.maybeToEither "Error" . decode . encodeUtf8 . LT.fromStrict)
-
 
 
 -- Cron Marshaller
@@ -143,33 +152,71 @@ cronTable =
 
 
 
-
-
 data Address = Address {
   a_building :: T.Text ,
   a_street :: T.Text ,
   a_city :: T.Text ,
   a_state :: T.Text ,
-  a_country :: T.Text 
+  a_country :: T.Text
 } deriving (Show , FromJSON , ToJSON , Generic)
 
-newtype BankAccount = BankAccount { unBankAccount :: T.Text }
-  deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
-class PII a where 
-  hash :: a -> T.Text
+data BankAccount = BankAccount {
+  bank_name :: T.Text ,
+  bank_ifsc :: T.Text ,
+  bank_address :: T.Text ,
+  bank_email :: T.Text ,
+  account_number :: T.Text ,
+  account_holder_name :: T.Text
+
+} deriving (Show , Generic, Eq , FromJSON , ToJSON)
 
 
-instance PII BankAccount where 
-  hash (BankAccount input) = T.pack (show $ H.hash input)
+
+-- Encryption
+myEncode :: T.Text -> T.Text
+myEncode = TE.decodeUtf8 . B64.encode . TE.encodeUtf8
+
+-- Decryption 
+myDecode :: T.Text -> T.Text
+myDecode input = case B64.decode (TE.encodeUtf8 input) of
+  Right bs -> TE.decodeUtf8 bs
+  Left _ -> error "Invalid Base64 data"
+
+
+
+-- Encryption BankAccount
+encryptBankAccount :: BankAccount -> BankAccount
+encryptBankAccount bankAccount =
+  BankAccount
+    { bank_name = myEncode $ bank_name bankAccount
+    , bank_ifsc = myEncode $ bank_ifsc bankAccount
+    , bank_address = myEncode $ bank_address bankAccount
+    , bank_email = myEncode $ bank_email bankAccount
+    , account_number = myEncode $ account_number bankAccount
+    , account_holder_name = myEncode $ account_holder_name bankAccount
+    }
+
+-- Decryption BankAccount
+decryptBankAccount :: BankAccount -> BankAccount
+decryptBankAccount bankAccount =
+  BankAccount
+    { bank_name = myDecode $ bank_name bankAccount
+    , bank_ifsc = myDecode $ bank_ifsc bankAccount
+    , bank_address = myDecode $ bank_address bankAccount
+    , bank_email = myDecode $ bank_email bankAccount
+    , account_number = myDecode $ account_number bankAccount
+    , account_holder_name = myDecode $ account_holder_name bankAccount
+    }
+
 
 data Graph = Graph
-  { 
+  {
     g_id :: CronId ,
     g_identifier :: Identifier ,
     g_address :: Address ,
-    g_bank_account :: T.Text ,
-    g_details :: Person 
+    g_bank_account :: BankAccount ,
+    g_details :: Person
   } deriving (Show, Generic, FromJSON, ToJSON)
 
 
@@ -186,12 +233,12 @@ graphAddressField :: O.FieldDefinition O.NotNull Address
 graphAddressField = O.convertField jsonByteStringConversion (O.jsonbField "g_address")
 
 
-graphBankAccountField :: O.FieldDefinition O.NotNull T.Text
-graphBankAccountField = O.coerceField $ O.unboundedTextField "g_bank_account"
+graphBankAccountField :: O.FieldDefinition O.NotNull BankAccount
+graphBankAccountField = O.convertField jsonByteStringConversion $ O.coerceField $ O.unboundedTextField "g_bank_account"
 
 
-graphDetailsField :: O.FieldDefinition O.NotNull Person 
-graphDetailsField = O.convertField jsonByteStringConversion $ O.coerceField  $ O.unboundedTextField "g_details" 
+graphDetailsField :: O.FieldDefinition O.NotNull Person
+graphDetailsField = O.convertField jsonByteStringConversion $ O.coerceField  $ O.unboundedTextField "g_details"
 
 
 
@@ -204,14 +251,14 @@ graphMarshaller =
     <*> O.marshallField g_address graphAddressField
     <*> O.marshallField g_bank_account graphBankAccountField
     <*> O.marshallField g_details graphDetailsField
-  
+
 
 
 graphTable :: O.TableDefinition (O.HasKey CronId) Graph Graph
 graphTable =
   O.mkTableDefinition
     "graph"
-    (O.primaryKey graphIdField) 
+    (O.primaryKey graphIdField)
     graphMarshaller
 
 
